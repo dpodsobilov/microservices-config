@@ -1,0 +1,40 @@
+spring:
+  application:
+    name: lr1
+  config:
+    name: configserver
+  profiles:
+    active: native
+  cloud:
+    config:
+      server:
+        native:
+          search-locations: classpath:/config
+        git:
+          uri: ${GIT_REPO_URI:https://github.com/your-repo/config-repo}
+          clone-on-start: ${GIT_CLONE_ON_START:true}
+          default-label: ${GIT_BRANCH:main}
+          username: ${GIT_USERNAME:}  # GitHub username
+          password: ${GIT_PASSWORD:}  # GitHub Personal Access Token (PAT)
+          basedir: ${GIT_BASEDIR:/tmp/config-repo}
+        health:
+          repositories:
+            default:
+              label: ${GIT_BRANCH:main}
+
+server:
+  port: ${SERVER_PORT:8888}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,configprops
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    org.springframework.cloud.config: ${LOG_LEVEL_CONFIG:DEBUG}
+    com.lr1: ${LOG_LEVEL_APP:DEBUG}
